@@ -14,18 +14,33 @@ class LinebotController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          seed1 = select_word
-          seed2 = select_word
-          while seed1 == seed2
+          # 正規表現で「〜』をパターンマッチしてkeywordへ格納
+          keyword = event.message['text'].match(/.*「(.+)」.*/)
+          # マッチングしたときのみ入力されたキーワードを使用
+          if  keyword.present?
             seed2 = select_word
+            message = [{
+              type: 'text',
+              text: "そのキーワードなかなかいいね〜"
+            },{
+              type: 'text',
+              # keyword[1]：「」内の文言
+              text: "#{keyword[1]} × #{seed2} !!"
+            }]
+          else
+            seed1 = select_word
+            seed2 = select_word
+            while seed1 == seed2
+              seed2 = select_word
+            end
+            message = [{
+              type: 'text',
+              text: "キーワード何にしようかな〜〜"
+            },{
+              type: 'text',
+              text: "#{seed1} × #{seed2} !!"
+            }]
           end
-          message = [{
-            type: 'text',
-            text: "キーワード何にしようかな〜〜"
-          },{
-            type: 'text',
-            text: "#{seed1} × #{seed2} !!"
-          }]
           client.reply_message(event['replyToken'], message)
         end
       end
