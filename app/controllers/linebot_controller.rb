@@ -41,7 +41,7 @@ class LinebotController < ApplicationController
   end
   def select_word
     # この中を変えると返ってくるキーワードが変わる
-    seeds = ["アイデア１", "アイデア２", "アイデア３", "アイデア４"]
+    seeds = ["寝る", "遊ぶ", "食べる", "読書"]
     seeds.sample
   end
 end
